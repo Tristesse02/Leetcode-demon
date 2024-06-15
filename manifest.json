@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Leetcode Demon Ratings",
+  "version": "1.0",
+  "permissions": ["activeTab", "scripting"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.leetcode.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "type": "module"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "images/lau3.jpg",
+        "images/Demon.png",
+        "images/Easy.png",
+        "images/EasyDemon.png",
+        "images/ExtremeDemon.png",
+        "images/Hard.png",
+        "images/Harder.png",
+        "images/Insane.png",
+        "images/InsaneDemon.png",
+        "images/MediumDemon.png",
+        "images/Normal.png",
+        "images/Unrated.png",
+        "images/Demon.png",
+        "styles.css"
+      ],
+      "matches": ["*://*.leetcode.com/*"]
+    }
+  ]
+}

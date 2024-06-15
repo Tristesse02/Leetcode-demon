@@ -1,0 +1,28 @@
+.mx-2.flex.items-center.py-\[11px\] {
+  position: relative;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  transition: opacity 0.3s ease;
+  opacity: 1;
+  position: absolute;
+}
+
+.mx-2.flex.items-center.py-\[11px\]:hover .icon {
+  opacity: 0;
+}
+
+.difficulty-tag {
+  position: absolute;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  opacity: 0;
+  z-index: 10; /* Ensure it's above other positioned elements */
+}
+
+.mx-2.flex.items-center.py-\[11px\]:hover .difficulty-tag {
+  visibility: visible;
+  opacity: 1;
+}
