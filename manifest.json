@@ -1,6 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Leetcode Demon Ratings",
+  "description": "Shows Geometry Dash demon ratings on Leetcode",
   "version": "1.0",
   "permissions": ["activeTab", "scripting"],
   "background": {
