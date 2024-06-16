@@ -1,9 +1,10 @@
 /** ****************************************************** Global Variable Definition ****************************************************** */
 let globalElem = [];
-let difficultyElem = [];
+// let difficultyElem = [];
 let debounceTimer = null;
 let debounceTimerDifficulty = null;
 let initialChanges = false;
+const difficultyElem = new Set();
 
 const observer = new MutationObserver((mutations) => {
   // marking the changes has been applied
@@ -19,7 +20,6 @@ const observer = new MutationObserver((mutations) => {
             node.matches(".text-olive, .dark\\:text-dark-olive") ||
             node.matches(".text-pink, .dark\\:text-dark-pink"))
         ) {
-          // console.log("newNode added:", node);
           if (node.nodeName === "SPAN") {
             globalElem.push(node);
           }
@@ -49,23 +49,43 @@ const difficultyObserver = new MutationObserver((mutations) => {
   initialChanges = true;
 
   mutations.forEach((mutation) => {
-    if (mutation.type === "attributes") {
-      if (
-        mutation.target.matches &&
-        (mutation.target.matches(".text-yellow, .dark\\:text-dark-yellow") ||
-          mutation.target.matches(".text-olive, .dark\\:text-dark-olive") ||
-          mutation.target.matches(".text-pink, .dark\\:text-dark-pink"))
+    if (mutation.type === "characterData") {
+      if (mutation.target.textContent.endsWith("%")) {
+        const acceptanceRateParent =
+          mutation.target.parentElement.parentElement;
+        const difficultyContainer = acceptanceRateParent.nextElementSibling;
+        difficultyElem.add(difficultyContainer.children[0]);
+      } else if (
+        mutation.target.textContent.endsWith("Easy") ||
+        mutation.target.textContent.endsWith("Medium") ||
+        mutation.target.textContent.endsWith("Hard")
       ) {
-        // console.log("node attributes changes", mutation.target);
-        difficultyElem.push(mutation.target);
+        difficultyElem.add(mutation.target.parentElement);
       }
 
       clearTimeout(debounceTimerDifficulty);
       debounceTimerDifficulty = setTimeout(() => {
         replaceImg(difficultyElem);
-        difficultyElem = [];
+        difficultyElem.clear();
       }, 500);
     }
+    // else if (mutation.type === "attributes") {
+    //     if (
+    //       mutation.target.matches &&
+    //       (mutation.target.matches(".text-yellow, .dark\\:text-dark-yellow") ||
+    //         mutation.target.matches(".text-olive, .dark\\:text-dark-olive") ||
+    //         mutation.target.matches(".text-pink, .dark\\:text-dark-pink"))
+    //     ) {
+    //       // console.log("node attributes changes", mutation.target);
+    //       difficultyElem.push(mutation.target);
+    //     }
+
+    //     clearTimeout(debounceTimerDifficulty);
+    //     debounceTimerDifficulty = setTimeout(() => {
+    //       replaceImg(difficultyElem);
+    //       difficultyElem = [];
+    //     }, 500);
+    //   }
   });
 });
 
@@ -93,7 +113,6 @@ const getImageUrl = () => {
 
   return (imgIdx) => {
     if (imgIdx >= imgsNames.length) {
-      // console.log("invalid index, should be between 0 and 10 (inclusive)");
       return null;
     }
 
@@ -173,7 +192,6 @@ const getDifficultyContainerAndModify = () => {
     return;
   }
 
-  // console.log("minhdz", tabularWrapperElem);
   const tabularContainerElem = tabularWrapperElem.children[1];
   addImgs(
     Array.from(tabularContainerElem.children).map(
@@ -190,8 +208,6 @@ const addImgs = (tags) => {
    */
   // Disconnect observer?? temporarily
   difficultyObserver.disconnect();
-
-  console.log(tags);
 
   tags.forEach((tag) => {
     const parentElem = tag.parentElement;
@@ -213,13 +229,13 @@ const addImgs = (tags) => {
 
   difficultyObserver.observe(
     document.getElementsByClassName("inline-block min-w-full")[0],
-    { childList: true, subtree: true, attributes: true }
+    { childList: true, subtree: true, attributes: true, characterData: true }
   );
   clearTimeout(debounceTimer);
 };
 
 const replaceImg = (tags) => {
-  console.log("vl bn oi");
+  // console.log("vl bn oi");
   /**
    * @param {Array} tags - An array of elements that contain html elements
    * @returns {void}
@@ -228,7 +244,7 @@ const replaceImg = (tags) => {
   // Disconnect observer?? temporarily
   observer.disconnect();
 
-  tags.forEach((tag) => {
+  for (let tag of tags) {
     const parentElem = tag.parentElement;
 
     if (!parentElem) {
@@ -236,7 +252,17 @@ const replaceImg = (tags) => {
     }
 
     evaluateDifficulty(parentElem);
-  });
+  }
+
+  // tags.forEach((tag) => {
+  //   const parentElem = tag.parentElement;
+
+  //   if (!parentElem) {
+  //     return;
+  //   }
+
+  //   evaluateDifficulty(parentElem);
+  // });
 
   observer.observe(
     document.getElementsByClassName("inline-block min-w-full")[0],
@@ -258,10 +284,6 @@ window.onload = async () => {
     "inline-block min-w-full"
   )[0];
 
-  const innerTabularWrapperElem = tabularWrapperElem.children[1];
-
-  // console.log(tabularWrapperElem.children[1].children.length);
-
   if (!tabularWrapperElem) {
     console.error("Tabular wrapper element not found.");
     return;
@@ -277,11 +299,11 @@ window.onload = async () => {
     childList: true,
     subtree: true,
     attributes: true,
+    characterData: true,
   });
 };
 
 window.addEventListener("popstate", function (event) {
-  console.log("Location changed!");
   this.setTimeout(() => {
     getDifficultyContainerAndModify();
   }, 1000);
