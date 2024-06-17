@@ -1,10 +1,9 @@
 /** ****************************************************** Global Variable Definition ****************************************************** */
 let globalElem = [];
-// let difficultyElem = [];
+const difficultyElem = new Set();
 let debounceTimer = null;
 let debounceTimerDifficulty = null;
 let initialChanges = false;
-const difficultyElem = new Set();
 
 const observer = new MutationObserver((mutations) => {
   // marking the changes has been applied
@@ -254,16 +253,6 @@ const replaceImg = (tags) => {
     evaluateDifficulty(parentElem);
   }
 
-  // tags.forEach((tag) => {
-  //   const parentElem = tag.parentElement;
-
-  //   if (!parentElem) {
-  //     return;
-  //   }
-
-  //   evaluateDifficulty(parentElem);
-  // });
-
   observer.observe(
     document.getElementsByClassName("inline-block min-w-full")[0],
     { childList: true, subtree: true, attributes: true }
@@ -308,15 +297,6 @@ window.addEventListener("popstate", function (event) {
     getDifficultyContainerAndModify();
   }, 1000);
 });
-
-// window.addEventListener("load", (event) => {
-//   console.log("huh");
-//   console.log(event.persisted);
-//   if (event.persisted) {
-//     console.log("Page was loaded from the cache.");
-//     getDifficultyContainerAndModify();
-//   }
-// });
 
 /** ************************************************************ Event Listener ************************************************************ */
 
