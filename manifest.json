@@ -3,7 +3,7 @@
   "name": "Leetcode Demon Ratings",
   "description": "Shows Geometry Dash demon ratings on Leetcode",
   "version": "1.0",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["scripting"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
